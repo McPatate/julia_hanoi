@@ -1,4 +1,4 @@
-num_disks = 1
+num_disks = 8
 
 all_disks = 1:num_disks
 
@@ -39,25 +39,69 @@ function wrong_solution(stacks)::Array{Tuple{Int, Int}}
 	return [(1,2), (2,3), (2,1), (1,3)]
 end
 
+function move_right(stack)::Array{Tuple{Int, Int}}
+	res = []
+	stack_size = size(stack, 1)
+	if stack_size > 1
+		append!(res, move_right(stack[1:end - 1]))
+	end
+
+	push!(res, (1, 2))
+
+	if stack_size > 1
+		append!(res, move_left(stack[1:end - 1]))
+	end
+
+	push!(res, (2, 3))
+
+	if stack_size > 1
+		append!(res, move_right(stack[1:end - 1]))
+	end
+	res
+end
+
+function move_left(stack)::Array{Tuple{Int, Int}}
+	res = []
+	stack_size = size(stack, 1)
+	if stack_size > 1
+		append!(res, move_left(stack[1:end - 1]))
+	end
+
+	push!(res, (3, 2))
+
+	if stack_size > 1
+		append!(res, move_right(stack[1:end - 1]))
+	end
+
+	push!(res, (2, 1))
+
+	if stack_size > 1
+		append!(res, move_left(stack[1:end - 1]))
+	end
+	res
+end
+
 function solve(stacks)::Array{Tuple{Int, Int}}
 	res = []
-	stacks = move(stacks, 1, 2)
-	stacks = move(stacks, 2, 3)
-	push!(res, (2, 3))
-	move_tower = function (stacks)
-		pos = 1
-		move_upper_tower_to_end()
-		push!(res, (pos, 2))
-		move_upper_tower_to_start()
-		move_right()
-		move_upper_tower_to_end()
-	end
-	# 	disks = first(stacks)
-	# 	i = size(disks, 1) - 1
-	# 	while last(stacks) != disks
+	stack = first(stacks)
 
-	# 	end
-	println("res : ", res)
+	stack_size = size(stack, 1)
+	if stack_size > 1
+		append!(res, move_right(stack[1:end - 1]))
+	end
+
+	push!(res, (1, 2))
+
+	if stack_size > 1
+		append!(res, move_left(stack[1:end - 1]))
+	end
+
+	push!(res, (2, 3))
+
+	if stack_size > 1
+		append!(res, move_right(stack[1:end - 1]))
+	end
+
 	return res
 end
 
@@ -80,7 +124,11 @@ end
 
 run_solution(wrong_solution)
 
-println(run_solution(solve))
+stacks = run_solution(solve)
+
+for stack in stacks
+	println(stack)
+end
 
 function check_solution(solver::Function, start = starting_stacks)
 	try
