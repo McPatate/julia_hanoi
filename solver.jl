@@ -39,68 +39,19 @@ function wrong_solution(stacks)::Array{Tuple{Int, Int}}
 	return [(1,2), (2,3), (2,1), (1,3)]
 end
 
-function move_right(stack)::Array{Tuple{Int, Int}}
-	res = []
-	stack_size = size(stack, 1)
-	if stack_size > 1
-		append!(res, move_right(stack[1:end - 1]))
+function move_disks(n, source, target, aux, res)
+	if n > 0
+		move_disks(n - 1, source, aux, target, res)
+		push!(res, (source, target))
+		move_disks(n - 1, aux, target, source, res)
 	end
-
-	push!(res, (1, 2))
-
-	if stack_size > 1
-		append!(res, move_left(stack[1:end - 1]))
-	end
-
-	push!(res, (2, 3))
-
-	if stack_size > 1
-		append!(res, move_right(stack[1:end - 1]))
-	end
-	res
-end
-
-function move_left(stack)::Array{Tuple{Int, Int}}
-	res = []
-	stack_size = size(stack, 1)
-	if stack_size > 1
-		append!(res, move_left(stack[1:end - 1]))
-	end
-
-	push!(res, (3, 2))
-
-	if stack_size > 1
-		append!(res, move_right(stack[1:end - 1]))
-	end
-
-	push!(res, (2, 1))
-
-	if stack_size > 1
-		append!(res, move_left(stack[1:end - 1]))
-	end
-	res
 end
 
 function solve(stacks)::Array{Tuple{Int, Int}}
 	res = []
-	stack = first(stacks)
+	n = size(first(stacks), 1)
 
-	stack_size = size(stack, 1)
-	if stack_size > 1
-		append!(res, move_right(stack[1:end - 1]))
-	end
-
-	push!(res, (1, 2))
-
-	if stack_size > 1
-		append!(res, move_left(stack[1:end - 1]))
-	end
-
-	push!(res, (2, 3))
-
-	if stack_size > 1
-		append!(res, move_right(stack[1:end - 1]))
-	end
+	move_disks(n, 1, 3, 2, res)
 
 	return res
 end
